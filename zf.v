@@ -1,72 +1,62 @@
 Section Conjuntos.
+  
+  (* Tercero excluído *)
+  Axiom classic: forall P : Prop, P \/ ~P.
 
-  Require Import Classical.
-  
-  (* Definición del tipo conjunto *)
-  Parameter conj: Type.
-  
-  (* Relación de pertenencia *)
-  Parameter elem: conj -> conj -> Prop.
-  
-  Notation "x ∈ y" := (elem x y) (at level 60).
-  
-  (* Relación subconjunto *)
-  Definition subconj (x y :conj) : Prop :=
-    forall z:conj, elem z x -> elem z y.
-  
-  Notation "x ⊆ y" := (subconj x y) (at level 60).
-  
-  (* Todo elemento es subconjunto de sí mismo *)
-  Lemma subconj_reflex: forall x:conj, subconj x x.
-  Proof.
-    intros.
-    unfold subconj.
-    trivial.
-  Qed.
-  
-  (* La relación subconjunto es transitiva *)
-  Lemma subconj_trans: forall x y z:conj, subconj x y -> subconj y z -> subconj x z.
+  (* Tipo conjunto *)
+  Parameter conj : Type.
+
+  (* Operación pertenece *)
+  Parameter elem : conj -> conj -> Prop.
+
+  Notation "x ∈ X" := (elem x X) (at level 60).
+  Notation "x ∉ X" := (~elem x X) (at level 60).
+
+  (* Definición de contención *)
+  Definition subconj (X Y :conj) : Prop :=
+    forall x: conj, elem x X -> elem x Y.
+
+  Notation "X ⊆ Y" := (subconj X Y) (at level 60).
+
+  (* La contención es reflexiva *)
+  Lemma subconj_reflex: forall A, subconj A A.
   Proof.
     unfold subconj.
     intros.
-    apply H in H1.
-    apply H0 in H1.
-    trivial.
+    exact H.
   Qed.
-  
-  (* Axioma 1: Extensionalidad *)
-  Axiom ext_conj: forall x y: conj, (forall z:conj, elem z x <-> elem z y) -> x = y.
-  
-(* Aquí pruebo que la extensionalidad implica que a ⊆ b y b ⊆ a -> a = b *)
-  Lemma ext_subconj: forall x y: conj, subconj x y -> subconj y x -> x = y.
+
+  (* La contención es transitiva *)
+  Lemma subconj_trans: forall A B C, subconj A B -> subconj B C -> subconj A C.
   Proof.
+    unfold subconj.
     intros.
-    apply ext_conj.
-    unfold subconj in *.
-    split.
-    apply H.
     apply H0.
+    apply H.
+    exact H1.
   Qed.
+
+  (** AXIOMAS **)
+  (* Axioma 1: Extensionalidad *)
+  Axiom ext_conj: forall X Y, (forall u, elem u X <-> elem u Y) -> X = Y.
   
-  Parameter vacio : conj.
+  Parameter par: conj -> conj -> conj.
+  Notation "{ X }" := (par X X).
+  Notation "{ X , Y }" := (par X Y) (at level 60).
   
-  Notation "∅" := vacio.
+  (* Axioma 2: Axioma del par *)
+  Axiom par_conj: forall a b x, elem x (par a b) <-> x = a \/ x = b.
+
+  (* Axioma (o familia de axiomas) 3: Subconjunto o Comprensión *)
+  Axiom compr_conj: forall (A: conj->Prop) (a:conj), exists x, forall y, elem y x <-> elem y a /\ A y.  
+
+  Parameter union: conj -> conj.
+  Notation "⋃ x" := (union x) (at level 60).
   
-  (* Axioma 2: Vacío *)
-  Axiom vacio_conj: forall y:conj, ~(elem y vacio).
+  (* Axioma 4: Unión *)
+  Axiom union_conj: forall X u, elem u (union X) <-> (exists z, elem z X /\ elem u z). 
+
+  Parameter potencia 
   
-  (* Todo conjunto o es vacío o tiene elementos *)
-  Theorem dic_conj: forall c:conj, c = vacio \/ exists x, elem x c. 
-  Proof.
-    intro.
-    classical_left.
-    unfold not in H.
-    
-  Qed.
-    
-  (* Axioma 2: ∈-induction (La relación de pertenencia cumple el principio de inducción *)
-    (* Axiom ind_conj: forall P : conj -> Prop, (forall X, (forall x, elem x X -> P x) -> P X) ->  *)
-    
   
 End Conjuntos.
-
