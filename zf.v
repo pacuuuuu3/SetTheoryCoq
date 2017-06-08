@@ -41,8 +41,10 @@ Section Conjuntos.
   Axiom ext_conj: forall X Y, (forall u, elem u X <-> elem u Y) -> X = Y.
   
   Parameter par: conj -> conj -> conj.
-  Notation "{ X }" := (par X X).
   Notation "{ X , Y }" := (par X Y) (at level 60).
+
+  (* Unitario de X *)
+  Notation "{ X }" := (par X X).
   
   (* Axioma 2: Axioma del par *)
   Axiom par_conj: forall a b x, elem x (par a b) <-> x = a \/ x = b.
@@ -52,11 +54,35 @@ Section Conjuntos.
 
   Parameter union: conj -> conj.
   Notation "⋃ x" := (union x) (at level 60).
+
+  (* Unión de dos conjuntos *)
+  Definition unionc (a b: conj) : conj :=
+    union (par a b).
+  
+  Notation "a ∪ b" := (unionc a b) (at level 60). 
   
   (* Axioma 4: Unión *)
   Axiom union_conj: forall X u, elem u (union X) <-> (exists z, elem z X /\ elem u z). 
 
-  Parameter potencia 
+  Parameter potencia: conj -> conj.
+
+  (* Axioma 5: Potencia *)
+  Axiom pot_conj: forall X u, elem u (potencia X) <-> subconj u X. 
+
+  (* Existe un conjunto. Para facilitarme las cosas, diré que es el vacío. *)
+  Parameter vacio:conj.
+  Notation "∅" := vacio. 
+
+  (* Axioma 6: Infinito *)
+  Axiom inf_conj: exists S, elem vacio S /\ (forall x, elem x S -> elem (unionc x (par x x)) S).
+  
+  (* Axioma 7: Reemplazo. La imagen de un conjunto es un conjunto 
+   * Codifiqué la función como una propiedad por facilidad *)
+  Axiom rempl_conj: forall (A : conj->conj->Prop) (a:conj), exists x,forall y, elem y a -> ((exists z, A y z) -> (exists z, elem z x /\ A y z)).
+
+  Definition intersec: 
+  
+  (* Axioma 8: Fundación *)
   
   
 End Conjuntos.
